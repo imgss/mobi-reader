@@ -8,10 +8,16 @@
     accepted-file-types="image/jpeg, image/png"
     v-bind:files="myFiles"
     v-on:init="handleFilePondInit"/>
-    <div id="book" class="page" v-html="currentContent"></div>
-    <div @click="current -= 1">上一页</div>
-    <div>{{current}}/{{total}}</div>
-    <div @click="current += 1">下一页</div>
+    <div id="book" >
+      <div class="page" >
+        <div class="content" v-html="currentContent"></div>
+      </div>
+    </div>
+    <div class="menu">
+      <div @click="current -= 1">上一章</div>
+      <div>{{current}}/{{total}}</div>
+      <div @click="current += 1">下一章</div>
+    </div>
   </div>
 </template>
 
@@ -71,6 +77,10 @@ export default {
 </script>
 
 <style>
+body{
+  padding: 0;
+  margin: 0;
+}
 #app{
   background-color: #e5e4db
 }
@@ -79,12 +89,17 @@ export default {
   clear: both;
   display: block;
 }
+.menu{
+  position: absolute;
+  top: 90px;
+  cursor: pointer;
+}
 .page {
-  height: 39em;
-  overflow: hidden;
+  overflow: scroll;
   position: relative;
   float: left;
   height: 48em;
+  line-height: 1.6em;
   width: 34em;
   padding: 5em 4.6875em 2.5em;
   margin: 0;
@@ -96,4 +111,9 @@ body{
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
+#book{
+  display: flex;
+  justify-content: center;
+}
+
 </style>
