@@ -8,7 +8,7 @@
     accepted-file-types="image/jpeg, image/png"
     v-bind:files="myFiles"
     v-on:init="handleFilePondInit"/>
-    <div id="book" v-html="currentContent"></div>
+    <div id="book" class="page" v-html="currentContent"></div>
     <div @click="current -= 1">上一页</div>
     <div>{{current}}/{{total}}</div>
     <div @click="current += 1">下一页</div>
@@ -71,5 +71,29 @@ export default {
 </script>
 
 <style>
-  /* CSS */
+#app{
+  background-color: #e5e4db
+}
+#app:after{
+  content: '';
+  clear: both;
+  display: block;
+}
+.page {
+  height: 39em;
+  overflow: hidden;
+  position: relative;
+  float: left;
+  height: 48em;
+  width: 34em;
+  padding: 5em 4.6875em 2.5em;
+  margin: 0;
+  background: #f6f4ec;
+  cursor: default;
+}
+body{
+  font: 14px 'Helvetica Neue',Helvetica,'Lucida Grande','Luxi Sans',Arial,'PingFang SC','Hiragino Sans GB',STHeiti,'Microsoft YaHei','Wenquanyi Micro Hei','WenQuanYi Micro Hei Mono','WenQuanYi Zen Hei','WenQuanYi Zen Hei Mono',LiGothicMed;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
 </style>
