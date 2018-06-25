@@ -9,7 +9,7 @@
     v-bind:files="myFiles"
     v-on:init="handleFilePondInit"/>
     <div id="book" >
-      <div class="page" >
+      <div class="page" ref="page">
         <div class="content" v-html="currentContent"></div>
       </div>
     </div>
@@ -66,6 +66,11 @@ export default {
       })
 
       // FilePond instance methods are available on `this.$refs.pond`
+    }
+  },
+  watch: {
+    current (now) {
+      this.$refs.page.scrollTop = 0
     }
   },
   mounted () {
