@@ -1,6 +1,6 @@
 # mobi-reader
 
-> An electron-vue project
+> An mobi file reader，under building
 
 #### Build Setup
 

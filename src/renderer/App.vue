@@ -1,14 +1,6 @@
 <template>
   <div id="app">
-    <file-pond
-    name="test"
-    ref="pond"
-    label-idle="Drop files here..."
-    allow-multiple="false"
-    accepted-file-types="image/jpeg, image/png"
-    v-bind:files="myFiles"
-    v-on:init="handleFilePondInit"/>
-    <div id="book" >
+    <div id="book" @dragenter.stop.prevent="dragenter" @dragleave.stop.prevent="dragleave" @drop.stop.prevent="drop" :class="isDragEnter ? 'enter' : 'leave'">
       <div class="page" ref="page">
         <div class="content" v-html="currentContent"></div>
       </div>
@@ -23,20 +15,14 @@
 
 <script>
 import MobiFile from './utils/mobi'
-// Import Vue FilePond
-import vueFilePond from 'vue-filepond'
-
-// Import FilePond styles
-import 'filepond/dist/filepond.min.css'
-
-// Create component
-const FilePond = vueFilePond()
+// const {ipcRenderer} = require('electron')
 
 export default {
   name: 'app',
   data: function () {
     return {
       myFiles: [],
+      isDragEnter: false,
       pages: [],
       current: 1
     }
@@ -50,22 +36,29 @@ export default {
     }
   },
   methods: {
-    handleFilePondInit: function () {
-      console.log('FilePond has initialized')
-      const pond = this.$refs.pond
-      pond.$on('addfile', (e, {file}) => {
-        console.log('File added', file)
-        var reader = new FileReader()
-        reader.onload = (event) => {
-          var file_content = event.target.result
-          let mobiFile = new MobiFile(file_content)
-          mobiFile.render()
-          this.pages = mobiFile.pages
-        }
-        reader.readAsArrayBuffer(file)
-      })
-
-      // FilePond instance methods are available on `this.$refs.pond`
+    dragenter (e) {
+      e.preventDefault()
+      e.stopPropagation()
+      this.isDragEnter = true
+    },
+    dragleave (e) {
+      e.preventDefault()
+      e.stopPropagation()
+      this.isDragEnter = false
+    },
+    drop (e) {
+      console.log('drop')
+      e.preventDefault()
+      e.stopPropagation()
+      var files = this.files || event.dataTransfer.files
+      var reader = new FileReader()
+      reader.onload = (event) => {
+        var file_content = event.target.result
+        let mobiFile = new MobiFile(file_content)
+        mobiFile.render()
+        this.pages = mobiFile.pages
+      }
+      reader.readAsArrayBuffer(files[0])
     }
   },
   watch: {
@@ -74,9 +67,6 @@ export default {
     }
   },
   mounted () {
-  },
-  components: {
-    FilePond
   }
 }
 </script>
@@ -85,9 +75,17 @@ export default {
 body{
   padding: 0;
   margin: 0;
+  height: 100vh;
+}
+.enter{
+  border: 2px solid #fff
+}
+.leave{
+  border: 2px dotted #fff
 }
 #app{
-  background-color: #e5e4db
+  background-color: #e5e4db;
+  height: 100%;
 }
 #app:after{
   content: '';
@@ -103,7 +101,8 @@ body{
   overflow: scroll;
   position: relative;
   float: left;
-  height: 48em;
+  max-height: 48em;
+  height: 90%;
   line-height: 1.6em;
   width: 34em;
   padding: 5em 4.6875em 2.5em;
