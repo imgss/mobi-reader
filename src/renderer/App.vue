@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <div id="book" @dragenter.stop.prevent="dragenter" @dragleave.stop.prevent="dragleave" @drop.stop.prevent="drop" :class="isDragEnter ? 'enter' : 'leave'">
+    <div id="book" >
       <div class="page" ref="page">
-        <div class="content" v-html="currentContent"></div>
+        <div class="content" v-html="currentContent" ></div>
       </div>
     </div>
     <div class="menu">
@@ -22,7 +22,6 @@ export default {
   data: function () {
     return {
       myFiles: [],
-      isDragEnter: false,
       pages: [],
       current: 1
     }
@@ -36,30 +35,6 @@ export default {
     }
   },
   methods: {
-    dragenter (e) {
-      e.preventDefault()
-      e.stopPropagation()
-      this.isDragEnter = true
-    },
-    dragleave (e) {
-      e.preventDefault()
-      e.stopPropagation()
-      this.isDragEnter = false
-    },
-    drop (e) {
-      console.log('drop')
-      e.preventDefault()
-      e.stopPropagation()
-      var files = this.files || event.dataTransfer.files
-      var reader = new FileReader()
-      reader.onload = (event) => {
-        var file_content = event.target.result
-        let mobiFile = new MobiFile(file_content)
-        mobiFile.render()
-        this.pages = mobiFile.pages
-      }
-      reader.readAsArrayBuffer(files[0])
-    }
   },
   watch: {
     current (now) {
@@ -67,6 +42,34 @@ export default {
     }
   },
   mounted () {
+    const book = document.getElementById('book')
+    console.log(book)
+    book.ondragover = function (e) {
+      event.preventDefault()
+      event.stopPropagation()
+      book.querySelector('.page').style.border = '2px dashed #fff'
+    }
+    book.ondragleave = function (e) {
+      event.preventDefault()
+      event.stopPropagation()
+      book.querySelector('.page').style.border = '2px solid #fff'
+    }
+    book.ondrop = (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+      console.log(event)
+      var files = this.files || event.dataTransfer.files
+      var reader = new FileReader()
+      reader.onload = (event) => {
+        var file_content = event.target.result
+        let mobiFile = new MobiFile(file_content)
+        mobiFile.render()
+        console.log(mobiFile.pages)
+        this.pages = mobiFile.pages
+      }
+      reader.readAsArrayBuffer(files[0])
+      // ipcRenderer.send('ondragstart', '/path/to/item')
+    }
   }
 }
 </script>
@@ -76,12 +79,6 @@ body{
   padding: 0;
   margin: 0;
   height: 100vh;
-}
-.enter{
-  border: 2px solid #fff
-}
-.leave{
-  border: 2px dotted #fff
 }
 #app{
   background-color: #e5e4db;
@@ -118,6 +115,8 @@ body{
 #book{
   display: flex;
   justify-content: center;
+  height: 100%;
+  align-items: center;
 }
 
 </style>
