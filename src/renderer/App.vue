@@ -2,13 +2,14 @@
   <div id="app">
     <div id="book" >
       <div class="page" ref="page">
-        <div class="content" v-html="currentContent" ></div>
+        <div class="content" v-html="currentContent" v-if="currentContent"></div>
+        <div v-else class="opener">Drop file here</div>
       </div>
     </div>
     <div class="menu">
-      <div @click="current -= 1">上一章</div>
-      <div>{{current}}/{{total}}</div>
-      <div @click="current += 1">下一章</div>
+      <div @click="prev">上一章</div>
+      <div>第{{current}}章/共{{total}}章</div>
+      <div @click="next">下一章</div>
     </div>
   </div>
 </template>
@@ -33,8 +34,6 @@ export default {
     currentContent () {
       return this.pages[this.current - 1] && this.pages[this.current - 1].innerHTML
     }
-  },
-  methods: {
   },
   watch: {
     current (now) {
@@ -69,6 +68,18 @@ export default {
       }
       reader.readAsArrayBuffer(files[0])
       // ipcRenderer.send('ondragstart', '/path/to/item')
+    }
+  },
+  methods: {
+    prev () {
+      if (this.current > 1) {
+        this.current -= 1
+      }
+    },
+    next () {
+      if (this.current < this.total) {
+        this.current += 1
+      }
     }
   }
 }
@@ -118,5 +129,12 @@ body{
   height: 100%;
   align-items: center;
 }
-
+/* opener */
+.opener{
+  font-size: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 </style>
