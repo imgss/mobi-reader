@@ -375,14 +375,12 @@ class MobiFile {
     var content = this.read_text()
 
     var bookDoc = domParser.parseFromString(content, 'text/html')
-    // bookDoc.body.childNodes.forEach(function (x) {
-    //   if (x instanceof Element) {
-    //     bookDom.appendChild(x)
-    //   }
-    // })
     const pages = Array.from(bookDoc.getElementsByTagName('mbp:pagebreak'))
     for (let i = 0, len = pages.length; i < len - 1; i++) {
-      pages[i].removeChild(pages[i + 1])
+      // todo 检查后一个不是前一个node的child的原因
+      if (pages[i].hasChildNodes(pages[i + 1])) {
+        pages[i].removeChild(pages[i + 1])
+      }
     }
     this.pages = pages
 
