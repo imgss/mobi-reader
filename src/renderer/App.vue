@@ -3,7 +3,7 @@
     <div id="book" >
       <div class="page" ref="page">
         <div class="content" v-html="currentContent" v-if="currentContent"></div>
-        <div v-else class="opener">Drop file here</div>
+        <div v-else class="opener" :class="{faded: isFileIn}">Drop file here</div>
       </div>
     </div>
     <div class="menu">
@@ -24,7 +24,8 @@ export default {
     return {
       myFiles: [],
       pages: [],
-      current: 1
+      current: 1,
+      isFileIn: false
     }
   },
   computed: {
@@ -43,15 +44,15 @@ export default {
   mounted () {
     const book = document.getElementById('book')
     console.log(book)
-    book.ondragover = function (e) {
+    book.ondragover = (e) => {
       event.preventDefault()
       event.stopPropagation()
-      book.querySelector('.page').style.border = '2px dashed #fff'
+      this.isFileIn = true
     }
-    book.ondragleave = function (e) {
+    book.ondragleave = (e) => {
       event.preventDefault()
       event.stopPropagation()
-      book.querySelector('.page').style.border = '2px solid #fff'
+      this.isFileIn = false
     }
     book.ondrop = (event) => {
       event.preventDefault()
@@ -136,5 +137,14 @@ body{
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.faded{
+  opacity: 0.8;
+  background-color: rgba(255, 255, 255, 0.6);
+  width: 300px;
+  height: 200px;
+  line-height: 200px;
+  border-radius: 20px;
+  text-align: center;
 }
 </style>
