@@ -1,9 +1,10 @@
 <template>
   <div id="app">
+    <input type="file" id="file" style="display: none;" @change="openFile">
     <div id="book" >
       <div class="page" ref="page">
         <div class="content" v-html="currentContent" v-if="currentContent"></div>
-        <div v-else class="opener" :class="{faded: isFileIn}">Drop file here</div>
+        <label v-else class="opener" for="file"  :class="{faded: isFileIn}">Drop file here<br>打开</label>
       </div>
     </div>
     <div class="menu">
@@ -59,6 +60,21 @@ export default {
       event.stopPropagation()
       console.log(event)
       var files = this.files || event.dataTransfer.files
+      this.renderBook(files)
+      // ipcRenderer.send('ondragstart', '/path/to/item')
+    }
+  },
+  methods: {
+    prev () {
+      if (this.current > 1) {
+        this.current -= 1
+      }
+    },
+    openFile (e) {
+      console.log(e)
+      this.renderBook(e.target.files)
+    },
+    renderBook (files) {
       var reader = new FileReader()
       reader.onload = (event) => {
         var file_content = event.target.result
@@ -68,14 +84,6 @@ export default {
         this.pages = mobiFile.pages
       }
       reader.readAsArrayBuffer(files[0])
-      // ipcRenderer.send('ondragstart', '/path/to/item')
-    }
-  },
-  methods: {
-    prev () {
-      if (this.current > 1) {
-        this.current -= 1
-      }
     },
     next () {
       if (this.current < this.total) {
@@ -134,6 +142,8 @@ body{
 .opener{
   font-size: 40px;
   position: absolute;
+  line-height: 1.5em;
+
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
