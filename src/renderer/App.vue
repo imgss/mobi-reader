@@ -4,14 +4,22 @@
     <div id="book" >
       <div class="page" ref="page">
         <div class="content" v-html="currentContent" v-if="currentContent"></div>
-        <label v-else class="opener" for="file"  :class="{faded: isFileIn}">Drop file here<br>打开</label>
+        <label v-else class="opener" for="file"  :class="{faded: isFileIn}">
+          Drop file here
+          <img src="@/assets/icon/open.svg" alt="" srcset="" class="icon">
+        </label>
       </div>
     </div>
     <div class="menu">
-      <div @click="prev">上一章</div>
-      <div>第{{current}}章/共{{total}}章</div>
-      <div @click="next">下一章</div>
+      <div @click="prev">
+        <img src="@/assets/icon/prev.svg" alt="prev" class="icon">
+      </div>
+      <div></div>
+      <div @click="next">
+        <img src="@/assets/icon/next.svg" alt="next" class="icon">
+      </div>
     </div>
+    <div>第{{current}}章/共{{total}}章</div>
   </div>
 </template>
 
@@ -73,6 +81,7 @@ export default {
     openFile (e) {
       console.log(e)
       this.renderBook(e.target.files)
+      document.title = e.target.files[0].name
     },
     renderBook (files) {
       var reader = new FileReader()
@@ -80,7 +89,6 @@ export default {
         var file_content = event.target.result
         let mobiFile = new MobiFile(file_content)
         mobiFile.render()
-        console.log(mobiFile.pages)
         this.pages = mobiFile.pages
       }
       reader.readAsArrayBuffer(files[0])
@@ -95,6 +103,10 @@ export default {
 </script>
 
 <style>
+.icon{
+  width: 40px;
+  height: 40px;
+}
 body{
   padding: 0;
   margin: 0;
@@ -113,6 +125,10 @@ body{
   position: absolute;
   top: 90px;
   cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  top: 50%;
 }
 .page {
   overflow: scroll;
@@ -143,7 +159,7 @@ body{
   font-size: 40px;
   position: absolute;
   line-height: 1.5em;
-
+  cursor: pointer;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
